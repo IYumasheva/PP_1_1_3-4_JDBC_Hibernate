@@ -4,7 +4,6 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.util.List;
@@ -16,87 +15,136 @@ public class UserDaoHibernateImpl implements UserDao {
         sessionFactory = Util.getSessionFactory();
     }
 
-
     @Override
     public void createUsersTable() {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
 
-        String sql = "CREATE TABLE IF NOT EXISTS preproj_m1.users ("
-                + "id MEDIUMINT NOT NULL AUTO_INCREMENT, "
-                + "name VARCHAR(255) NULL, "
-                + "lastname VARCHAR(255) NULL, "
-                + "age TINYINT NULL, "
-                + "PRIMARY KEY (id) "
-                + ")";
+            String sql = "CREATE TABLE IF NOT EXISTS preproj_m1.users ("
+                    + "id MEDIUMINT NOT NULL AUTO_INCREMENT, "
+                    + "name VARCHAR(255) NULL, "
+                    + "lastname VARCHAR(255) NULL, "
+                    + "age TINYINT NULL, "
+                    + "PRIMARY KEY (id) "
+                    + ")";
 
-        session.createSQLQuery(sql).executeUpdate();
+            session.createSQLQuery(sql).executeUpdate();
 
-        session.getTransaction().commit();
-        session.close();
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        }
+
     }
 
     @Override
     public void dropUsersTable() {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
 
-        String sql = "DROP TABLE IF EXISTS preproj_m1.users";
+            String sql = "DROP TABLE IF EXISTS preproj_m1.users";
 
-        session.createSQLQuery(sql).executeUpdate();
+            session.createSQLQuery(sql).executeUpdate();
 
-        session.getTransaction().commit();
-        session.close();
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
 
-        session.save(new User(name, lastName, age));
+            session.save(new User(name, lastName, age));
 
-        session.getTransaction().commit();
-        session.close();
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void removeUserById(long id) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
 
-        String hql = "DELETE User WHERE id = :id";
-        Query query = session.createQuery(hql);
-        query.setParameter("id", id).executeUpdate();
+            String hql = "DELETE User WHERE id = :id";
+            Query query = session.createQuery(hql);
+            query.setParameter("id", id).executeUpdate();
 
-        session.getTransaction().commit();
-        session.close();
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        }
     }
 
     @Override
     public List<User> getAllUsers() {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
 
-        String hql = "FROM User";
-        Query query = session.createQuery(hql);
-        List<User> users = query.list();
+            String hql = "FROM User";
+            Query query = session.createQuery(hql);
+            List<User> users = query.list();
 
-        session.getTransaction().commit();
-        session.close();
-        return users;
+            session.getTransaction().commit();
+            session.close();
+            return users;
+        } catch (Exception e) {
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     public void cleanUsersTable() {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
 
-        String sql = "TRUNCATE TABLE preproj_m1.users";
+            String sql = "TRUNCATE TABLE preproj_m1.users";
 
-        session.createSQLQuery(sql).executeUpdate();
+            session.createSQLQuery(sql).executeUpdate();
 
-        session.getTransaction().commit();
-        session.close();
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        }
     }
 }
